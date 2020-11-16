@@ -25,6 +25,17 @@ parts:
       - grub-common
     plugin: make
     after: [grub-prepare]
+  shim-signed-snappy-dev:
+    plugin: nil
+    source: .
+    override-build: |
+      PACKAGES="http://ppa.launchpad.net/snappy-dev/image/ubuntu/dists/focal/main/binary-amd64/Packages.gz"
+      PKGPATH="$(wget -q -O- $PACKAGES|zcat|grep Filename |\
+                         grep shim | grep -ve lpae|tail -1| sed 's/^Filename: //')"
+      wget http://ppa.launchpad.net/snappy-dev/image/ubuntu/$PKGPATH
+      dpkg -x $(basename $PKGPATH) unpack/
+      cp unpack/usr/lib/shim/shimx64.efi.signed $SNAPCRAFT_PART_INSTALL/shim.efi.signed
+      rm -rf unpack
   prepare-device:
     plugin: nil
     override-build: |
