@@ -1,4 +1,4 @@
-name: pc
+name: greggs-bugra-gadget
 version: '20-0.4'
 type: gadget
 base: core20
@@ -41,11 +41,6 @@ parts:
     override-build: |
       echo "Building the 'prepare-device' hook ..."
 
-      if [ -z "${MODEL_APIKEY}" ]; then
-        echo "Please define MODEL_APIKEY for building this gadget."
-        exit 1
-      fi
-
       mkdir -p snap/hooks/
 
       cat << EOF > snap/hooks/prepare-device
@@ -55,8 +50,6 @@ parts:
       product_serial=\$(date -Is)
       echo "product_serial:[\$product_serial]"
       snapctl set registration.proposed-serial="\"\${product_serial}\""
-      snapctl set device-service.url="https://serial-vault-partners.canonical.com/v1/"
-      snapctl set device-service.headers='{"api-key": "${MODEL_APIKEY}"}'
       EOF
 
       chmod +x snap/hooks/prepare-device
